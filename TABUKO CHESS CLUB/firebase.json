@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": ".",
+    "public": "TABUKO CHESS CLUB",
     "ignore": [
       "firebase.json",
       "firestore.rules",
