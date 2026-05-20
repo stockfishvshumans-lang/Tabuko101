@@ -1,0 +1,236 @@
+.futuristic-login-container {
+    --bg-dark: #02030a;
+    --brand-blue: #0ea5e9;
+    --brand-dark-blue: #1e3a8a;
+    --brand-accent: #6366f1;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    width: 100vw; height: 100vh;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 1000;
+}
+
+.futuristic-login-container * { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* 1. CINEMATIC CENTERED HERO IMAGE */
+.futuristic-login-container .hero-image-bg {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    /* The knight is perfectly centered, preserving exact framing and aspect ratio */
+    background: url('../tabuko.png') no-repeat center center;
+    background-size: contain; 
+    z-index: 0;
+}
+
+/* Atmospheric depth layers to ground the image */
+.futuristic-login-container .vignette-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    /* Left/Right shadows to frame the text and panel, leaving center bright */
+    background: linear-gradient(90deg, rgba(2, 3, 10, 0.8) 0%, rgba(2, 3, 10, 0.2) 20%, rgba(2, 3, 10, 0) 50%, rgba(2, 3, 10, 0.2) 80%, rgba(2, 3, 10, 0.8) 100%),
+                radial-gradient(circle at center, transparent 40%, rgba(2, 3, 10, 0.95) 100%);
+    pointer-events: none; z-index: 1;
+}
+
+.futuristic-login-container #canvas-container {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none;
+}
+
+/* Nav & Footer */
+.futuristic-login-container .top-nav {
+    position: absolute; top: 3rem; right: 5rem; z-index: 20;
+}
+.futuristic-login-container .status-badge {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(14, 165, 233, 0.3);
+    padding: 8px 18px; border-radius: 30px;
+    font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; letter-spacing: 1.5px; color: var(--brand-blue);
+    backdrop-filter: blur(10px);
+}
+.futuristic-login-container .status-badge .dot {
+    width: 6px; height: 6px; background-color: #0ea5e9; border-radius: 50%;
+    box-shadow: 0 0 15px #0ea5e9; animation: fl-pulse 2s infinite;
+}
+
+.futuristic-login-container .bottom-nav {
+    position: absolute; bottom: 3rem; left: 5rem; right: 5rem; z-index: 20;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.75rem; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase;
+}
+.futuristic-login-container .footer-left { display: flex; align-items: center; gap: 12px; }
+.futuristic-login-container .footer-icon { width: 18px; height: 18px; opacity: 0.8; }
+
+/* 2. LAYOUT - Giving the centered knight maximum breathing room */
+.futuristic-login-container .ui-layer {
+    position: relative; z-index: 10; width: 100%; height: 100%;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 6vw; pointer-events: none;
+}
+
+/* Brand Section (Left) */
+.futuristic-login-container .brand-section {
+    flex: 1; display: flex; flex-direction: column; justify-content: center; pointer-events: auto; max-width: 480px;
+}
+.futuristic-login-container .logo-container { margin-bottom: 0.5rem; }
+
+/* 3. METALLIC FUTURISTIC TYPOGRAPHY */
+.futuristic-login-container .logo-text {
+    font-family: 'Space Grotesk', sans-serif; 
+    font-size: 5rem; 
+    font-weight: 800; 
+    letter-spacing: 8px;
+    display: flex; 
+    align-items: center;
+}
+
+.futuristic-login-container .logo-text .letter {
+    display: inline-block;
+    background: linear-gradient(180deg, #ffffff 0%, #bae6fd 45%, #1e40af 55%, #e0f2fe 100%);
+    background-size: 100% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.8)) drop-shadow(0 0 15px rgba(14, 165, 233, 0.4));
+    animation: letter-shimmer 6s infinite alternate ease-in-out;
+}
+.futuristic-login-container .logo-text .letter:nth-child(2) { animation-delay: 0.2s; }
+.futuristic-login-container .logo-text .letter:nth-child(3) { animation-delay: 0.4s; }
+.futuristic-login-container .logo-text .letter:nth-child(4) { animation-delay: 0.6s; }
+.futuristic-login-container .logo-text .letter:nth-child(5) { animation-delay: 0.8s; }
+
+@keyframes letter-shimmer {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 0% 100%; }
+}
+
+/* The O symbol - Tactical Reactor */
+.futuristic-login-container .logo-o {
+    position: relative; 
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center; 
+    width: 1.25em; 
+    height: 1.25em; 
+    margin-left: 0.1em; 
+    vertical-align: middle;
+}
+.futuristic-login-container .logo-o-svg {
+    width: 100%; height: 100%;
+    filter: drop-shadow(0 0 25px rgba(14, 165, 233, 0.9));
+}
+.futuristic-login-container .logo-o-ring-1 { animation: o-spin 25s linear infinite; transform-origin: center; }
+.futuristic-login-container .logo-o-ring-2 { animation: o-spin 15s linear infinite reverse; transform-origin: center; }
+.futuristic-login-container .logo-o-ring-3 { animation: o-spin 8s linear infinite; transform-origin: center; }
+.futuristic-login-container .logo-o-core { animation: fl-pulse 2s ease-in-out infinite alternate; transform-origin: center; }
+
+/* Holographic scan overlay for the O */
+.futuristic-login-container .logo-o::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 50%;
+    background: linear-gradient(180deg, transparent 0%, rgba(14, 165, 233, 0.6) 50%, transparent 100%);
+    background-size: 100% 200%;
+    animation: o-scan 3s ease-in-out infinite alternate;
+    pointer-events: none; mix-blend-mode: screen;
+}
+@keyframes o-scan { 0% { background-position: 0% -100%; } 100% { background-position: 0% 200%; } }
+
+.futuristic-login-container .brand-subtitle {
+    font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; letter-spacing: 6px; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 600;
+}
+.futuristic-login-container .divider {
+    width: 45px; height: 2px; background: var(--brand-accent); border-radius: 2px;
+    margin: 1.5rem 0; box-shadow: 0 0 20px var(--brand-accent);
+}
+.futuristic-login-container .tagline {
+    font-size: 1.1rem; color: var(--text-dim); line-height: 1.8; letter-spacing: 0.5px;
+}
+
+/* Center padding to give breathing room for the Knight */
+.futuristic-login-container .center-space { flex: 2.2; }
+
+/* Login Section (Right) */
+.futuristic-login-container .login-section {
+    flex: 1; pointer-events: auto; display: flex; justify-content: flex-end; max-width: 460px; perspective: 1200px;
+}
+
+/* Refined Cinematic Premium Panel */
+.futuristic-login-container .glass-card {
+    width: 100%; 
+    background: rgba(2, 4, 12, 0.4); /* Enhanced transparency */
+    backdrop-filter: blur(55px); -webkit-backdrop-filter: blur(55px);
+    border: 1px solid rgba(14, 165, 233, 0.1); 
+    border-radius: 24px;
+    padding: 3.5rem 3rem; 
+    box-shadow: 0 50px 100px rgba(0, 0, 0, 0.95), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+    position: relative; overflow: hidden; transform-style: preserve-3d;
+    transition: transform 0.1s ease-out;
+}
+
+.futuristic-login-container .glass-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 24px; padding: 1px;
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.8), transparent 30%, transparent 70%, rgba(99, 102, 241, 0.6));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+}
+
+.futuristic-login-container .welcome-text { font-size: 0.75rem; color: var(--brand-accent); letter-spacing: 3px; text-transform: uppercase; font-weight: 700; }
+.futuristic-login-container .card-header h2 { font-size: 2.2rem; font-weight: 700; margin: 0.5rem 0 0.25rem 0; letter-spacing: -0.5px; color: #fff; }
+.futuristic-login-container .card-header p { color: var(--text-muted); font-size: 1rem; margin-bottom: 1rem; }
+
+.futuristic-login-container .input-group { margin-bottom: 1.8rem; }
+.futuristic-login-container .input-group label { display: block; font-size: 0.85rem; font-weight: 600; color: #cbd5e1; margin-bottom: 0.8rem; text-align: left;}
+
+.futuristic-login-container .input-wrapper { position: relative; display: flex; align-items: center; }
+.futuristic-login-container .input-icon { position: absolute; left: 1.2rem; width: 18px; height: 18px; color: var(--text-dim); transition: color 0.3s; }
+.futuristic-login-container .eye-icon { position: absolute; right: 1.2rem; width: 18px; height: 18px; color: var(--text-dim); cursor: pointer; transition: color 0.3s; }
+.futuristic-login-container .eye-icon:hover { color: var(--brand-blue); }
+
+.futuristic-login-container .input-wrapper input {
+    width: 100%; background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px;
+    padding: 1.2rem 1rem 1.2rem 3.5rem; color: white; font-family: 'Inter', sans-serif; font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); outline: none; box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+}
+.futuristic-login-container .input-wrapper input:hover {
+    border-color: rgba(14, 165, 233, 0.4); background: rgba(14, 165, 233, 0.03);
+}
+.futuristic-login-container .input-wrapper input:focus {
+    border-color: rgba(14, 165, 233, 0.8); background: rgba(14, 165, 233, 0.08);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5), 0 0 25px rgba(14, 165, 233, 0.2);
+}
+.futuristic-login-container .input-wrapper input:focus + .input-icon { color: var(--brand-blue); }
+
+.futuristic-login-container .cyber-button {
+    width: 100%; padding: 1.25rem; margin-top: 1.5rem;
+    background: linear-gradient(90deg, #1e3a8a, #0ea5e9); 
+    border: 1px solid rgba(255,255,255,0.15); border-radius: 12px;
+    color: white; font-weight: 700; font-size: 1.05rem; cursor: pointer;
+    box-shadow: 0 10px 30px rgba(14, 165, 233, 0.4), inset 0 1px 0 rgba(255,255,255,0.2); 
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); display: block; position: relative; overflow: hidden;
+}
+.futuristic-login-container .cyber-button::after {
+    content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: skewX(-20deg); transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.futuristic-login-container .cyber-button:hover { 
+    box-shadow: 0 15px 40px rgba(14, 165, 233, 0.6), inset 0 1px 0 rgba(255,255,255,0.4); transform: translateY(-2px); 
+}
+.futuristic-login-container .cyber-button:hover::after { left: 150%; }
+
+.futuristic-login-container .card-footer { margin-top: 2.5rem; text-align: center; }
+.futuristic-login-container .register-link { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+.futuristic-login-container .register-link a { color: var(--brand-blue); text-decoration: none; font-weight: 600; transition: all 0.3s; }
+.futuristic-login-container .register-link a:hover { text-shadow: 0 0 15px rgba(14, 165, 233, 0.6); color: #7dd3fc; }
+
+.futuristic-login-container .secure-badge { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.75rem; color: var(--text-dim); }
+.futuristic-login-container .secure-badge svg { width: 14px; height: 14px; }
+
+@keyframes o-spin { 100% { transform: rotate(360deg); } }
+@keyframes fl-pulse { 0% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 20px #0ea5e9); } 50% { opacity: 0.6; transform: scale(0.95); filter: drop-shadow(0 0 5px #0ea5e9); } 100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 20px #0ea5e9); } }

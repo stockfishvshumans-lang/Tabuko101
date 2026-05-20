@@ -1,0 +1,90 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "firestore.rules",
+      "firestore.indexes.json",
+      "docs/**",
+      "node_modules/**"
+    ],
+    "rewrites": [
+      { "source": "**", "destination": "/index.html" }
+    ],
+    "headers": [
+      {
+        "source": "**/index.html",
+        "headers": [
+          { "key": "Cache-Control",             "value": "no-cache, no-store, must-revalidate" },
+          { "key": "Pragma",                    "value": "no-cache" },
+          { "key": "Expires",                   "value": "0" },
+          { "key": "Cross-Origin-Opener-Policy","value": "same-origin-allow-popups" },
+          { "key": "Cross-Origin-Embedder-Policy","value": "unsafe-none" },
+          { "key": "X-Content-Type-Options",    "value": "nosniff" },
+          { "key": "X-Frame-Options",           "value": "SAMEORIGIN" },
+          { "key": "Referrer-Policy",           "value": "strict-origin-when-cross-origin" }
+        ]
+      },
+      {
+        "source": "**/*.js",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
+          { "key": "Pragma",        "value": "no-cache" }
+        ]
+      },
+      {
+        "source": "**/*.css",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
+          { "key": "Pragma",        "value": "no-cache" }
+        ]
+      },
+      {
+        "source": "**/*.html",
+        "headers": [
+          { "key": "Cache-Control",             "value": "no-cache, no-store, must-revalidate" },
+          { "key": "Cross-Origin-Opener-Policy","value": "same-origin-allow-popups" }
+        ]
+      },
+      {
+        "source": "**/*.@(png|jpg|jpeg|gif|webp|svg|ico)",
+        "headers": [
+          { "key": "Cache-Control", "value": "public, max-age=604800, immutable" }
+        ]
+      },
+      {
+        "source": "**/*.@(woff|woff2|ttf|eot)",
+        "headers": [
+          { "key": "Cache-Control", "value": "public, max-age=2592000, immutable" },
+          { "key": "Access-Control-Allow-Origin", "value": "*" }
+        ]
+      },
+      {
+        "source": "**",
+        "headers": [
+          { "key": "Cross-Origin-Opener-Policy",   "value": "same-origin-allow-popups" },
+          { "key": "X-Content-Type-Options",       "value": "nosniff" },
+          { "key": "Referrer-Policy",              "value": "strict-origin-when-cross-origin" }
+        ]
+      }
+    ]
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "disallowLegacyRuntimeConfig": true,
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ]
+}

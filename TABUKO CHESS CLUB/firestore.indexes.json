@@ -1,0 +1,132 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "tournaments",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "clubId",    "order": "ASCENDING" },
+        { "fieldPath": "status",    "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "tournaments",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status",    "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "tournaments",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status",     "order": "ASCENDING" },
+        { "fieldPath": "isArchived", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "teams",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "clubId",        "order": "ASCENDING" },
+        { "fieldPath": "tournamentId",  "order": "ASCENDING" },
+        { "fieldPath": "matchPoints",   "order": "DESCENDING" },
+        { "fieldPath": "boardPoints",   "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "audit_logs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "tournamentId", "order": "ASCENDING" },
+        { "fieldPath": "timestamp",    "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "match_history",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "ownerId",   "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "members",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "name",   "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "members",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status",     "order": "ASCENDING" },
+        { "fieldPath": "isArchived", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "members",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status",     "order": "ASCENDING" },
+        { "fieldPath": "isArchived", "order": "ASCENDING" },
+        { "fieldPath": "name",       "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "playerData",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        { "fieldPath": "withdrawn", "order": "ASCENDING" },
+        { "fieldPath": "score",     "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "playerData",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        { "fieldPath": "withdrawn",       "order": "ASCENDING" },
+        { "fieldPath": "score",           "order": "DESCENDING" },
+        { "fieldPath": "selectedRating",  "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "playerData",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        { "fieldPath": "withdrawn",       "order": "ASCENDING" },
+        { "fieldPath": "score",           "order": "DESCENDING" },
+        { "fieldPath": "buchholz",        "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "playerData",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        { "fieldPath": "withdrawn",       "order": "ASCENDING" },
+        { "fieldPath": "score",           "order": "DESCENDING" },
+        { "fieldPath": "sonnebornBerger", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "operations_log",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "type",      "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "billing_ledger",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status",    "order": "ASCENDING" },
+        { "fieldPath": "syncedAt",  "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

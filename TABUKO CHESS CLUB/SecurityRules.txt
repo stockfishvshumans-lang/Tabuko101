@@ -1,0 +1,60 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper to check if user is signed in
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Helper to check if user has a specific role
+    function hasRole(role) {
+      return isSignedIn() && (
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role ||
+        request.auth.token.role == role
+      );
+    }
+
+    // Helper to check if user belongs to the club they are trying to access
+    function belongsToClub(clubId) {
+      return isSignedIn() && (
+        request.auth.token.clubId == clubId ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.clubId == clubId
+      );
+    }
+
+    // INSTRUCTION: Enforce clubId matching
+    function isClubAuthorized(resourceData) {
+      return hasRole('SUPER_ADMIN') || belongsToClub(resourceData.clubId);
+    }
+
+    // 1. Clubs Collection (Admins can read their own club, Super Admins can read all)
+    match /clubs/{clubId} {
+      allow read: if isClubAuthorized({'clubId': clubId});
+      allow write: if hasRole('SUPER_ADMIN');
+      
+      // Audit Logs sub-collection
+      match /audit_logs/{logId} {
+        allow read: if isClubAuthorized({'clubId': clubId});
+        allow create: if isSignedIn(); // Logged by any system actor
+      }
+    }
+
+    // 2. Multi-Tenant Collections (Tournaments, Members, Players)
+    match /{collectionName}/{docId} {
+      allow read, write: if collectionName in ['tournaments', 'members', 'players', 'playerRegistry', 'match_history'] 
+                         && isClubAuthorized(request.resource.data || resource.data);
+    }
+
+    // 3. User Profiles
+    match /users/{userId} {
+      allow read, write: if request.auth.uid == userId || hasRole('SUPER_ADMIN');
+    }
+
+    // 4. Global Support Tickets
+    match /support_tickets/{ticketId} {
+      allow read: if hasRole('SUPER_ADMIN') || (isSignedIn() && resource.data.uid == request.auth.uid);
+      allow create: if isSignedIn();
+    }
+  }
+}

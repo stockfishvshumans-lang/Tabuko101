@@ -1,0 +1,21 @@
+{
+  "name": "Tabuko Chess Club - Tournament Manager",
+  "short_name": "Tabuko Chess",
+  "description": "Deterministic Event-Sourced Tournament Management System",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3039/3039434.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3039/3039434.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

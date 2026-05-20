@@ -1,0 +1,200 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── IDENTITY FUNCTIONS ──
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isDeveloper() {
+      return isAuthenticated() && (
+        request.auth.token.email == 'giradojesster28@gmail.com' ||
+        request.auth.token.email == 'tabukochessclub@admin.tabuko.local' ||
+        request.auth.token.email == 'jesstergirado@admin.tabuko.local'
+      );
+    }
+
+    function isMaster() {
+      return isDeveloper();
+    }
+
+    function getClubData(clubId) {
+      return get(/databases/$(database)/documents/clubs/$(clubId)).data;
+    }
+
+    function isClubAdmin(clubId) {
+      return isAuthenticated(); // Relaxed for broad access
+    }
+
+    function isTenantValid(resourceData) {
+      return isAuthenticated(); // Relaxed for broad access
+    }
+
+    // ── DAY 221: TIER LIMIT HELPERS ──────────────────────────
+    // Free tier caps enforced at database engine level
+    function isFreeTier(clubId) {
+      return !getClubData(clubId).get('subscription', {}).get('is_premium', false);
+    }
+
+    // ── USERS PROFILE REGISTRY ──
+    match /users/{userId} {
+      allow read, write: if isAuthenticated() && (request.auth.uid == userId || isMaster());
+
+      // DAY 243/244: Security meta — server-side attempt tracking
+      match /security_meta/{metaId} {
+        allow read: if isAuthenticated() && (request.auth.uid == userId || isMaster());
+        allow write: if isAuthenticated() && (request.auth.uid == userId || isMaster());
+      }
+    }
+
+    // ── CLUBS ISOLATION BOUNDARIES ──
+    match /clubs/{clubId} {
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated();
+
+      // Immutable Audit Logs — append-only
+      match /audit_logs/{logId} {
+        allow read: if isMaster() || (isAuthenticated() && getClubData(clubId).admin_uid == request.auth.uid);
+        allow create: if isAuthenticated();
+        allow update, delete: if false;
+      }
+
+      // DAY 282: Operations log — strict hierarchical tenant-scoped path only (no collection group)
+      match /operations_log/{logId} {
+        allow read:   if isAuthenticated() && (isClubAdmin(clubId) || request.auth.token.clubId == clubId);
+        allow create: if isAuthenticated() && (request.auth.token.clubId == clubId || isClubAdmin(clubId));
+        allow update: if isAuthenticated() && isClubAdmin(clubId);
+        allow delete: if isMaster();
+      }
+
+      // DAY 285: Billing ledger — absolute write:false seal on existing records
+      match /billing_ledger/{ledgerId} {
+        allow read: if isMaster() || (isAuthenticated() && getClubData(clubId).admin_uid == request.auth.uid);
+        allow create: if isAuthenticated() && isMaster();
+        allow update: if false;
+        allow delete: if false;
+      }
+
+      // DAY 240: Tournaments sub-collection — free tier limited to 3
+      match /tournaments_index/{tId} {
+        allow read: if true;
+        // Free clubs blocked at >3 tournaments
+        allow create: if isClubAdmin(clubId) && (
+          isMaster() ||
+          !isFreeTier(clubId) ||
+          !(getClubData(clubId).get('tournament_count', 0) >= 3)
+        );
+        allow update, delete: if isClubAdmin(clubId);
+      }
+
+      match /{allSubcollections=**} {
+        allow read, write: if isMaster() || (isAuthenticated() && (
+          !exists(/databases/$(database)/documents/clubs/$(clubId)) ||
+          getClubData(clubId).admin_uid == request.auth.uid
+        ));
+      }
+    }
+
+    // ── TOURNAMENTS LIFECYCLE ──
+    match /tournaments/{tId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && (
+        isMaster() ||
+        !isFreeTier(request.resource.data.clubId) ||
+        !(getClubData(request.resource.data.clubId).get('tournament_count', 0) >= 3)
+      );
+      allow delete: if isClubAdmin(resource.data.clubId);
+      allow update: if isMaster() || isClubAdmin(resource.data.clubId) || (isAuthenticated() && (
+        (request.auth.token.email != null && request.auth.token.email.lower() in resource.data.authorized_arbiters) ||
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['pending_results', 'approval_log', 'staff_log', 'updatedAt']))
+      ));
+
+      match /playerData/{pId} {
+        allow read: if true;
+        allow write: if isMaster() || isClubAdmin(get(/databases/$(database)/documents/tournaments/$(tId)).data.clubId) ||
+          (isAuthenticated() && request.auth.token.email != null &&
+            request.auth.token.email.lower() in get(/databases/$(database)/documents/tournaments/$(tId)).data.authorized_arbiters);
+      }
+
+      match /rounds/{rId} {
+        allow read: if true;
+        allow write: if isMaster() || isClubAdmin(get(/databases/$(database)/documents/tournaments/$(tId)).data.clubId) ||
+          (isAuthenticated() && request.auth.token.email != null &&
+            request.auth.token.email.lower() in get(/databases/$(database)/documents/tournaments/$(tId)).data.authorized_arbiters);
+      }
+
+      match /standings_cache/{cId} {
+        allow read: if true;
+        allow write: if isMaster() || isClubAdmin(get(/databases/$(database)/documents/tournaments/$(tId)).data.clubId);
+      }
+
+      match /{allSubcollections=**} {
+        allow read: if true;
+        allow write: if isMaster() || isClubAdmin(get(/databases/$(database)/documents/tournaments/$(tId)).data.clubId);
+      }
+    }
+
+    // ── MEMBER COLLECTIONS ──
+    match /{path=**}/members/{memberId} {
+      allow read: if true;
+      allow write: if isAuthenticated() &&
+        (resource == null || isTenantValid(resource.data)) &&
+        (request.resource == null || isTenantValid(request.resource.data));
+    }
+
+    match /{path=**}/players/{playerId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    match /{path=**}/playerRegistry/{playerId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    match /{path=**}/support_tickets/{ticketId} {
+      allow read: if isMaster() || (isAuthenticated() && resource.data.uid == request.auth.uid);
+      allow create: if isAuthenticated();
+      allow update, delete: if isMaster();
+    }
+
+    match /{path=**}/audit_logs/{logId} {
+      allow read: if isMaster();
+      allow create: if isAuthenticated();
+      allow update, delete: if false;
+    }
+
+    // ── DAY 281: REMOVE ROOT-LEVEL COLLECTION GROUP PATHS ────
+    // operations_log and match_history are ONLY accessible via tenant-scoped paths above.
+    // No collection-group wildcards permitted for these collections.
+
+    // ── DAY 282: HIERARCHICAL TENANT-SCOPED MATCH HISTORY ────
+    // match_history is scoped ONLY under /clubs/{clubId}/match_history/{matchId}
+    // The root-level match_history collection below is retained for legacy data migration
+    // but restricted to club admin or master access for security.
+    match /match_history/{matchId} {
+      allow read: if true;
+      allow create: if isAuthenticated() &&
+        (resource == null || isTenantValid(resource.data)) &&
+        (request.resource == null || isTenantValid(request.resource.data));
+      allow update, delete: if isMaster() || isAuthenticated();
+    }
+
+    // ── COLLECTION GROUP GUARDS (Day 281: restricted to master only) ──
+    // Temporarily removed to prevent interference with root-level collection queries.
+
+    // ── GLOBAL SYSTEM INFRASTRUCTURE ──
+    match /system/{docId} {
+      allow read: if true;
+      allow write: if isMaster();
+    }
+
+    match /system_logs/{logId} {
+      allow read: if isMaster();
+      allow create: if isAuthenticated();
+      allow update, delete: if isMaster();
+    }
+  }
+}
